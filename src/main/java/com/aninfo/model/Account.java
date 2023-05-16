@@ -1,6 +1,7 @@
 package com.aninfo.model;
 
 import javax.persistence.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 public class Account {
@@ -32,6 +33,10 @@ public class Account {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public void getAffectedByTransaction(Transaction transaction) {
+        this.setBalance(this.getBalance() + transaction.getSum());
     }
 
 }
