@@ -1,7 +1,9 @@
 package com.aninfo;
 
 import com.aninfo.model.Account;
+import com.aninfo.model.Transaction;
 import com.aninfo.service.AccountService;
+import com.aninfo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,6 +29,12 @@ public class Memo1BankApp {
 	@Autowired
 	private AccountService accountService;
 
+	@Autowired
+	private TransactionService transactionService;
+
+	public Memo1BankApp() {
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(Memo1BankApp.class, args);
 	}
@@ -47,6 +55,21 @@ public class Memo1BankApp {
 		Optional<Account> accountOptional = accountService.findById(cbu);
 		return ResponseEntity.of(accountOptional);
 	}
+
+	@GetMapping("/transactions")
+	public Collection<Transaction> getTransactions() { return transactionService.getTransactions(); }
+
+	@GetMapping("/transactions/{transactionId}")
+	public ResponseEntity<Transaction> getTransaction(@PathVariable Long transactionId) {
+		Optional<Transaction> transactionOptional = transactionService.findById(transactionId);
+		return ResponseEntity.of(transactionOptional);
+	}
+
+	@GetMapping()
+	public Collection<Transaction> getTransactionsByAccount(@RequestParam("cbu") Long accountCbu) {
+		return transactionService.getTransactionsByAccount(accountCbu);
+	}
+
 
 	@PutMapping("/accounts/{cbu}")
 	public ResponseEntity<Account> updateAccount(@RequestBody Account account, @PathVariable Long cbu) {
@@ -83,4 +106,5 @@ public class Memo1BankApp {
 			.paths(PathSelectors.any())
 			.build();
 	}
+
 }

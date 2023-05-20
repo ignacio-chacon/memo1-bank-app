@@ -8,7 +8,7 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long cbu;
+    private Long accountCbu;
 
     private Double balance;
 
@@ -20,11 +20,11 @@ public class Account {
     }
 
     public Long getCbu() {
-        return cbu;
+        return accountCbu;
     }
 
     public void setCbu(Long cbu) {
-        this.cbu = cbu;
+        this.accountCbu = cbu;
     }
 
     public Double getBalance() {
@@ -33,10 +33,6 @@ public class Account {
 
     public void setBalance(Double balance) {
         this.balance = balance;
-    }
-
-    public void getAffectedByTransaction(Transaction transaction) {
-        this.setBalance(this.getBalance() + transaction.getSum());
     }
 
 }

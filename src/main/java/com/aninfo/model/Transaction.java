@@ -11,22 +11,22 @@ public class Transaction {
 
     private Double sum;
 
-    private Long accountCbu;
+    @ManyToOne
+    private Account account;
 
     public Transaction(){
     }
 
-    public Transaction(Double sum, Long accountCbu) {
-
+    public Transaction(Double sum, Account account) {
         this.sum = sum;
-        this.accountCbu = accountCbu;
+        this.account = account;
     }
 
-    public Long getAccountCbu() { return accountCbu; }
+    public Account getAccount() { return account; }
 
-    public void setAccountCbu(Long accountCbu) {
-        this.accountCbu = accountCbu;
-    }
+    public Long getAccountCbu() { return account.getCbu(); }
+
+    public void setAccount(Account account) { this.account = account; }
 
     public Double getSum() {
         return sum;

@@ -5,6 +5,7 @@ import com.aninfo.exceptions.InsufficientFundsException;
 import com.aninfo.model.Account;
 import com.aninfo.model.Transaction;
 import com.aninfo.repository.AccountRepository;
+import com.aninfo.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     public Account createAccount(Account account) {
         return accountRepository.save(account);
@@ -40,15 +44,15 @@ public class AccountService {
 
     @Transactional
     public Account withdraw(Long cbu, Double sum) {
-        Account account = accountRepository.findAccountByCbu(cbu);
-        Transaction withdrawTransaction = new Transaction(-sum, cbu);
-
+        Account account = accountRepository.findAccountByAccountCbu(cbu);
         if (account.getBalance() < sum) {
             throw new InsufficientFundsException("Insufficient funds");
         }
 
-        account.getAffectedByTransaction(withdrawTransaction);
+        Transaction withdrawTransaction = new Transaction(-sum, account);
+        account.setBalance(account.getBalance() - sum);
         accountRepository.save(account);
+        transactionRepository.save(withdrawTransaction);
         return account;
     }
 
@@ -59,10 +63,21 @@ public class AccountService {
             throw new DepositNegativeSumException("Cannot deposit negative sums");
         }
 
-        Account account = accountRepository.findAccountByCbu(cbu);
-        Transaction depositTransaction = new Transaction(sum, cbu);
-        account.getAffectedByTransaction(depositTransaction);
+        Account account = accountRepository.findAccountByAccountCbu(cbu);
+        Transaction depositTransaction = new Transaction(sum, account);
+        if (sum >= 2000 && sum < 5000) {
+            account.setBalance(account.getBalance() + sum*1.1);
+        }
+        else if (sum >= 5000) {
+            account.setBalance(account.getBalance() + sum + 500);
+        }
+        else {
+            account.setBalance(account.getBalance() + sum);
+
+        }
+
         accountRepository.save(account);
+        transactionRepository.save(depositTransaction);
         return account;
     }
 
